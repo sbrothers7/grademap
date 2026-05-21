@@ -26,6 +26,13 @@ function setMode(next) {
 
 tabs.forEach(t => t.addEventListener('click', () => setMode(t.dataset.mode)));
 
+// Surface a notice if we landed here from an auto-logout.
+if (new URLSearchParams(location.search).get('expired') === '1') {
+    const notice = $('#login-notice');
+    notice.textContent = 'Your session expired and you were automatically logged out.';
+    notice.classList.remove('hidden');
+}
+
 // If already logged in, bounce home.
 (async () => {
     try {

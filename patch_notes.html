@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Patch Notes · GradeMap</title>
+    <base href="/">
+    <script src="js/head-common.js"></script>
+    <link rel="stylesheet" href="css/grademap.css">
+    <style>
+        .patch-main {
+            max-width: 640px;
+        }
+
+        .patch-entry {
+            margin-bottom: 28px;
+        }
+
+        .patch-entry h2 {
+            font-size: 16px;
+            margin: 0 0 4px;
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+
+        .patch-entry h2 .date {
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--gm-muted);
+        }
+
+        .patch-entry ul {
+            margin: 6px 0 0;
+            padding-left: 20px;
+            font-size: 14px;
+            line-height: 1.55;
+            margin-bottom: 2em;
+        }
+
+        .patch-entry li {
+            margin-bottom: 2px;
+        }
+    </style>
+</head>
+
+<body class="gm-body">
+    <header class="gm-header">
+        <div class="gm-header-left">
+            <h1 class="gm-title"><a href="/">GradeMap</a></h1>
+            <a href="/" class="nav-link">← Back</a>
+        </div>
+    </header>
+
+    <main class="gm-main patch-main">
+        <h1>Patch Notes</h1>
+
+        <section class="patch-entry">
+            <h2>v1.0.1 <span class="date">May 2026</span></h2>
+            <ul>
+                <li>Fixed Dragon Active</li>
+                <li>Expired sessions redirect to login page</li>
+                <li>Added privacy statement</li>
+                <li>Minor UI changes</li>
+            </ul>
+
+            <h2>v1.0.0 <span class="date">May 2026</span></h2>
+            <ul>
+                <li>First public release</li>
+                <li>Moved server storage from local SQLite to Turso</li>
+                <li>Sessions auto-expire after 10 minutes</li>
+                <li>Custom subject dropdown</li>
+                <li>Privacy mode is now a labeled switch</li>
+            </ul>
+        </section>
+    </main>
+
+    <site-watermark></site-watermark>
+    <dm-button></dm-button>
+
+    <script src="js/components.js"></script>
+    <script src="js/global.js"></script>
+</body>
+
+</html>

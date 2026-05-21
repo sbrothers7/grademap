@@ -83,17 +83,17 @@
     transition: transform 0.2s, background-color 0.2s;
 }
 
-.privacy-switch input:checked + .switch-track {
+.privacy-switch input:checked+.switch-track {
     background: color-mix(in srgb, var(--accent) 25%, transparent);
     border-color: color-mix(in srgb, var(--accent) 45%, transparent);
 }
 
-.privacy-switch input:checked + .switch-track .switch-thumb {
+.privacy-switch input:checked+.switch-track .switch-thumb {
     transform: translate(14px, -50%);
     background: var(--accent);
 }
 
-.privacy-switch input:focus-visible + .switch-track {
+.privacy-switch input:focus-visible+.switch-track {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
 }
@@ -157,11 +157,13 @@
     border-color: var(--gm-border-hi) !important;
 }
 
-.privacy-on .score-cell:hover input::placeholder,
-.privacy-on .finals-block:hover .finals-input::placeholder,
-.privacy-on .target-input:hover::placeholder {
+/* Hover (but not focused) reveals the placeholder so empty cells are obvious. */
+.privacy-on .score-cell:hover input:not(:focus)::placeholder,
+.privacy-on .finals-block:hover .finals-input:not(:focus)::placeholder,
+.privacy-on .target-input:hover:not(:focus)::placeholder {
     color: var(--gm-muted) !important;
 }
+
 
 .privacy-on .cat-head:hover .cat-avg,
 .privacy-on .final-grade-block:hover .final-grade,
@@ -295,6 +297,72 @@
     transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
+/* ===== card appear ===== */
+@keyframes subject-appear {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+.subject {
+    animation: subject-appear 0.3s ease-out;
+}
+
+/* ===== loading skeleton (phase 1) ===== */
+@keyframes skeleton-pulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.4; }
+}
+
+.subject.loading .score-cell input,
+.subject.loading .finals-input,
+.subject.loading .target-input,
+.subject.loading .subject-name {
+    background-color: var(--gm-surface-hi) !important;
+    border-color: transparent !important;
+    color: transparent !important;
+    animation: skeleton-pulse 1.2s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.subject.loading .score-cell input::placeholder,
+.subject.loading .finals-input::placeholder,
+.subject.loading .target-input::placeholder,
+.subject.loading .subject-name::placeholder {
+    color: transparent !important;
+}
+
+.subject.loading .cat-avg,
+.subject.loading .final-grade,
+.subject.loading .target-result,
+.subject.loading .subject-type-badge {
+    background-color: var(--gm-surface-hi);
+    color: transparent !important;
+    border-radius: 3px;
+    animation: skeleton-pulse 1.2s ease-in-out infinite;
+}
+
+.subject.loading .add-score,
+.subject.loading .del-subject,
+.subject.loading .remove-score {
+    visibility: hidden;
+}
+
+/* ===== field fade-in (phase 2) ===== */
+@keyframes field-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.subject.fade-fields .subject-name,
+.subject.fade-fields .subject-type-badge,
+.subject.fade-fields .score-cell input,
+.subject.fade-fields .finals-input,
+.subject.fade-fields .target-input,
+.subject.fade-fields .cat-avg,
+.subject.fade-fields .final-grade,
+.subject.fade-fields .target-result {
+    animation: field-fade-in 0.35s ease-out;
+}
+
 .subject:hover {
     border-color: var(--gm-border-hi);
     transform: translateY(-2px);
@@ -397,6 +465,7 @@
     border-color: color-mix(in srgb, #4285F4 35%, transparent);
     color: #4285F4;
 }
+
 
 /* ===== semester tabs ===== */
 .semester-tabs {

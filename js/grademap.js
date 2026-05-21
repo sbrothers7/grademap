@@ -25,14 +25,19 @@ function detectSubjectType(name) {
     const n = (name || '').trim().toLowerCase();
     if (!n) return 'elective';
     if (n.startsWith('ap ')) return 'ap';
+    if (n === 'health and physical education') return 'pe';
     if (CORE_NAMES.has(n)) return 'core';
     return 'elective';
 }
 // Whether finals apply for this semester
 function finalsApplies(type, sem) {
-    if (type === 'core') return true;
+    if (type === 'core' || type === 'pe') return true;
     if (type === 'ap') return sem === 's1';
     return false; // electives
+}
+// Label for the "finals" slot — PE uses a Dragon Active assessment.
+function finalsLabel(type) {
+    return type === 'pe' ? 'Dragon Active' : 'Finals';
 }
 
 // ===== persistence =====
@@ -90,22 +95,9 @@ async function loadFromServer() {
     return j.data;
 }
 
-async function bootstrapData() {
+function loadInitialGrademap() {
     const local = loadLocal();
-    const server = await loadFromServer();
-
-    if (state.user) {
-        if (server && server.subjects) {
-            state.grademap = server;
-        } else if (local && local.subjects?.length) {
-            state.grademap = local;
-            await syncToServer();
-        } else {
-            state.grademap = { subjects: [blankSubject()] };
-        }
-    } else {
-        state.grademap = local || { subjects: [blankSubject()] };
-    }
+    return local && local.subjects?.length ? local : { subjects: [blankSubject()] };
 }
 
 // ===== account widget =====
@@ -181,7 +173,7 @@ function updateTimerDisplay() {
     if (remainingMs <= 0) {
         stopSessionCountdown();
         el.textContent = '0:00';
-        logout();
+        autoLogout();
         return;
     }
     const totalSec = Math.ceil(remainingMs / 1000);
@@ -191,14 +183,21 @@ function updateTimerDisplay() {
     el.classList.toggle('session-timer-warn', remainingMs < 60 * 1000);
 }
 
+async function autoLogout() {
+    try { await fetch('/api/logout', { method: 'POST' }); } catch { }
+    window.location.replace('/login.html?expired=1');
+}
+
 // ===== subject rendering =====
-function renderSubjects() {
+function renderSubjects({ loading = false, animate = false } = {}) {
     const list = document.getElementById('subjects-list');
     const tpl = document.getElementById('subject-template');
     list.innerHTML = '';
 
     state.grademap.subjects.forEach((subj, sIdx) => {
         const node = tpl.content.firstElementChild.cloneNode(true);
+        if (loading) node.classList.add('loading');
+        if (animate) node.classList.add('fade-fields');
         const nameEl = node.querySelector('.subject-name');
         const suggestionsEl = node.querySelector('.subject-suggestions');
         const badgeEl = node.querySelector('.subject-type-badge');
@@ -279,7 +278,7 @@ function renderSubjects() {
 }
 
 function updateBadge(badgeEl, type) {
-    const labels = { core: 'Core', ap: 'AP', elective: 'Elective' };
+    const labels = { core: 'Core', ap: 'AP', elective: 'Elective', pe: 'Elective' };
     badgeEl.textContent = labels[type];
     badgeEl.dataset.type = type;
 }
@@ -306,10 +305,12 @@ function renderActiveSemester(node, subj) {
     // AP S2: keep the row visible but disabled — same subject does have finals in S1.
     // Core / AP S1: enabled, optional.
     const showFinals = finalsApplies(type, sem);
+    const finalsLbl = finalsLabel(type);
     const footer = node.querySelector('.subject-footer');
     const finalsBlock = node.querySelector('.finals-block');
     const finalsInput = node.querySelector('.finals-input');
     const finalsNote = node.querySelector('.finals-note');
+    const finalsLabelEl = finalsBlock.querySelector('.cat-label');
 
     if (type === 'elective') {
         finalsBlock.classList.add('hidden');
@@ -321,9 +322,11 @@ function renderActiveSemester(node, subj) {
         finalsBlock.classList.toggle('disabled', !showFinals);
         finalsInput.disabled = !showFinals;
         finalsInput.value = showFinals ? (subj[sem].finals ?? '') : '';
+        finalsLabelEl.textContent = finalsLbl;
 
         if (type === 'ap' && sem === 's2') finalsNote.textContent = '(no final in S2)';
         else if (type === 'core') finalsNote.textContent = '(optional)';
+        else if (type === 'pe') finalsNote.textContent = '(required)';
         else finalsNote.textContent = '';
     }
 
@@ -334,8 +337,9 @@ function renderActiveSemester(node, subj) {
 
     const validCats = ['formative', 'summative'];
     if (showFinals) validCats.push('finals');
+    const catLabels = { formative: 'Formative', summative: 'Summative', finals: finalsLbl };
     targetCatSel.innerHTML = validCats.map(c =>
-        `<option value="${c}">${c[0].toUpperCase() + c.slice(1)}</option>`
+        `<option value="${c}">${catLabels[c]}</option>`
     ).join('');
     let currentCat = subj[sem].targetCat || 'summative';
     if (!validCats.includes(currentCat)) currentCat = 'summative';
@@ -619,9 +623,28 @@ applyPrivacy(localStorage.getItem(PRIVACY_KEY) === 'true');
 (async function init() {
     await fetchMe();
     if (state.user) await fetchSessionExpiry();
-    await bootstrapData();
     renderAccountWidget();
-    renderSubjects();
+
+    if (state.user) {
+        // Phase 1: show a skeleton card while we wait for the server.
+        state.grademap = { subjects: [blankSubject()] };
+        renderSubjects({ loading: true });
+
+        // Phase 2: real data → re-render with fields fading in.
+        const server = await loadFromServer();
+        if (server && server.subjects) {
+            state.grademap = server;
+        } else {
+            const local = loadLocal();
+            state.grademap = local && local.subjects?.length ? local : { subjects: [blankSubject()] };
+            if (state.grademap.subjects.some(s => s.name)) await syncToServer();
+        }
+        renderSubjects({ animate: true });
+    } else {
+        // Logged out: nothing to fetch, render local data directly.
+        state.grademap = loadInitialGrademap();
+        renderSubjects();
+    }
 })();
 
 // ===== custom subject autocomplete =====

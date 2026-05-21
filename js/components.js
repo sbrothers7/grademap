@@ -21,3 +21,10 @@ class DarkModeButton extends HTMLElement {
     }
 }
 customElements.define("dm-button", DarkModeButton);
+
+class SiteWatermark extends HTMLElement {
+    connectedCallback() {
+        this.innerHTML = `<p id="watermark"><i>Copyright © 2026 Siwool Um</i></p>`;
+    }
+}
+customElements.define("site-watermark", SiteWatermark);

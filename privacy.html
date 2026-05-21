@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Privacy · GradeMap</title>
+    <base href="/">
+    <script src="js/head-common.js"></script>
+    <link rel="stylesheet" href="css/grademap.css">
+    <style>
+        .privacy-main {
+            max-width: 640px;
+        }
+
+        .privacy-main h1 {
+            margin-bottom: 4px;
+        }
+
+        .privacy-main .updated {
+            font-size: 12px;
+            color: var(--gm-muted);
+            margin-top: 0;
+            margin-bottom: 24px;
+        }
+
+        .privacy-main h2 {
+            font-size: 16px;
+            margin: 22px 0 6px;
+        }
+
+        .privacy-main p,
+        .privacy-main li {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .privacy-main ul {
+            padding-left: 20px;
+            margin: 4px 0;
+        }
+    </style>
+</head>
+
+<body class="gm-body">
+    <header class="gm-header">
+        <div class="gm-header-left">
+            <h1 class="gm-title"><a href="/">GradeMap</a></h1>
+            <a href="/" class="nav-link">← Back</a>
+        </div>
+    </header>
+
+    <main class="gm-main privacy-main">
+        <h1>Privacy</h1>
+        <p class="updated">Last updated: May 2026</p>
+
+        <p>GradeMap is a personal project. The goal of this page is to be straightforward about what the site stores and
+            why. This project is licensed under the MIT License. All code is <a
+                href="https://github.com/sbrothers7/grademap">public</a>.</p>
+
+        <h2>What gets stored on the server</h2>
+        <p><strong>If</strong> you create an account, the database (hosted on Turso) holds:</p>
+        <ul>
+            <li>Your username.</li>
+            <li>A hashed copy of your password (argon2 — the plain password is never stored).</li>
+            <li>Your email address, if you set one.</li>
+            <li>Your Google account ID, if you link Google sign-in.</li>
+            <li>Your grademap data: subject names, scores, and targets.</li>
+            <li>An opaque session ID and its expiry timestamp.</li>
+        </ul>
+        <br>
+        <p><strong>All data stored in the database is encrypted. It is guaranteed that your personal data will not be
+                shared or accessed by anyone for any means. Creating an account is not required and your data will be
+                stored locally inside your browser instead.</strong></p>
+        <br>
+
+        <h2>What gets stored in your browser</h2>
+        <ul>
+            <li>A session cookie (HttpOnly, SameSite=Lax) for staying signed in. It expires 10 minutes after each
+                refresh.</li>
+            <li>Your grademap data in localStorage, so the site works without an account. While you are signed in,
+                localStorage is not modified.</li>
+            <li>Your theme and privacy-mode preference in localStorage.</li>
+        </ul>
+
+        <h2>Third parties</h2>
+        <p>Sign-in with Google is optional. If you use it, your Google profile (account ID and email) is shared with
+            this site so it can recognize you on future visits. Nothing else is sent to Google.</p>
+        <p>The site itself runs on Render and stores data on Turso. No analytics, ad networks, or trackers are loaded.
+        </p>
+
+        <h2>Sessions and auto-logout</h2>
+        <p>Sessions last 10 minutes from the most recent refresh. You can extend a session from the header, or log out
+            manually. When the timer runs out, the session is invalidated on the server and the cookie is cleared.</p>
+
+        <h2>Deleting your account</h2>
+        <p>Visit your account page and use "Delete account". This removes your user record, your grademap, and all
+            sessions tied to it. The action is immediate and not reversible.</p>
+
+        <h2>Contact</h2>
+        <p>Questions or requests: open an issue on the GitHub repo, or contact the author directly.</p>
+    </main>
+
+    <site-watermark></site-watermark>
+    <dm-button></dm-button>
+
+    <script src="js/components.js"></script>
+    <script src="js/global.js"></script>
+</body>
+
+</html>
