@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>GradeMap</title>
+	<base href="/">
+	<script src="js/head-common.js"></script>
+	<link rel="stylesheet" href="css/grademap.css">
+</head>
+
+<body class="gm-body">
+	<header class="gm-header">
+		<div class="gm-header-left">
+			<h1 class="gm-title"><a href="/">GradeMap</a></h1>
+			<a href="patch_notes.html" class="nav-link">Patch notes</a>
+		</div>
+		<label class="privacy-switch">
+			<span class="switch-label">Privacy mode</span>
+			<input type="checkbox" id="privacy-toggle">
+			<span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+		</label>
+		<div id="account-widget" class="account-widget"></div>
+	</header>
+
+	<main class="gm-main">
+		<section id="subjects-list" class="subjects-list"></section>
+
+		<div class="gm-controls">
+			<button id="add-subject" class="add-subject">+ Add Subject</button>
+			<span id="save-status" class="status"></span>
+		</div>
+
+		<section class="gm-summary">
+			<h2 class="summary-title">Summary</h2>
+			<div class="summary-grid">
+				<div class="summary-card">
+					<span class="label">Unweighted GPA</span>
+					<span id="gpa-unweighted" class="value">—</span>
+				</div>
+				<div class="summary-card">
+					<span class="label">Weighted GPA</span>
+					<span id="gpa-weighted" class="value">—</span>
+				</div>
+				<div class="summary-card">
+					<span class="label">Average</span>
+					<span id="overall-pct" class="value">—</span>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<template id="subject-template">
+		<article class="subject">
+			<header class="subject-header">
+				<div class="subject-name-wrap">
+					<input class="subject-name" placeholder="Subject name" autocomplete="off">
+					<ul class="subject-suggestions hidden" role="listbox"></ul>
+				</div>
+				<span class="subject-type-badge" data-type=""></span>
+				<button class="del-subject" title="Remove subject" aria-label="Remove subject">×</button>
+			</header>
+
+			<nav class="semester-tabs" role="tablist">
+				<button class="sem-tab" data-sem="s1" role="tab" aria-selected="true">Semester 1</button>
+				<button class="sem-tab" data-sem="s2" role="tab" aria-selected="false">Semester 2</button>
+			</nav>
+
+			<div class="categories">
+				<div class="category" data-cat="formative">
+					<div class="cat-head">
+						<span class="cat-label">Formative</span>
+						<span class="cat-avg"></span>
+					</div>
+					<div class="scores-row">
+						<div class="scores"></div>
+						<button class="add-score" title="Add score">+</button>
+					</div>
+				</div>
+				<div class="category" data-cat="summative">
+					<div class="cat-head">
+						<span class="cat-label">Summative</span>
+						<span class="cat-avg"></span>
+					</div>
+					<div class="scores-row">
+						<div class="scores"></div>
+						<button class="add-score" title="Add score">+</button>
+					</div>
+				</div>
+			</div>
+
+			<footer class="subject-footer">
+				<div class="finals-block">
+					<span class="cat-label">Finals</span>
+					<input type="number" class="finals-input" placeholder="—" min="0" max="100" step="0.1">
+					<span class="finals-note"></span>
+				</div>
+				<div class="final-grade-block">
+					<span class="cat-label">Final Grade</span>
+					<span class="final-grade">—</span>
+				</div>
+			</footer>
+
+			<div class="target-row">
+				<span class="cat-label">Target</span>
+				<input class="target-input" type="text" placeholder="A or 93" autocomplete="off" maxlength="6">
+				<span class="target-for">on</span>
+				<select class="target-cat">
+					<option value="formative">Formative</option>
+					<option value="summative" selected>Summative</option>
+					<option value="finals">Finals</option>
+				</select>
+				<span class="target-arrow">→</span>
+				<span class="target-result">—</span>
+			</div>
+		</article>
+	</template>
+
+	<p id="watermark"><i>Copyright © 2026 Siwool Um</i></p>
+	<dm-button></dm-button>
+
+	<script src="js/components.js"></script>
+	<script src="js/global.js"></script>
+	<script src="js/calc.js"></script>
+	<script src="js/grademap.js"></script>
+</body>
+
+</html>

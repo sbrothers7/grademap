@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Account · GradeMap</title>
+    <base href="/">
+    <script src="js/head-common.js"></script>
+    <link rel="stylesheet" href="css/grademap.css">
+    <link rel="stylesheet" href="css/account.css">
+</head>
+
+<body class="gm-body">
+    <header class="gm-header">
+        <h1 class="gm-title"><a href="/">GradeMap</a></h1>
+        <nav class="account-nav">
+            <a href="/">← Back to grades</a>
+        </nav>
+    </header>
+
+    <main class="gm-main">
+        <h2 class="page-title">Account</h2>
+
+        <section id="anon-state" class="hidden">
+            <p>You're not logged in. <a href="grademap.html">Sign up or log in</a> from the grademap page.</p>
+        </section>
+
+        <div id="logged-in-state">
+            <section class="card">
+                <h3>Username</h3>
+                <p class="hint">Used to log in. Letters, numbers, <code>_ . -</code>, 3–30 chars.</p>
+                <form id="form-username" class="row">
+                    <input type="text" name="username" id="cur-username" autocomplete="username" required>
+                    <button type="submit">Save</button>
+                    <span class="msg" data-for="username"></span>
+                </form>
+            </section>
+
+            <section class="card">
+                <h3>Email</h3>
+                <p class="hint">Optional. Used to link Google and (eventually) reset your password. Leave empty to remove.</p>
+                <form id="form-email" class="row">
+                    <input type="email" name="email" id="cur-email" autocomplete="email" placeholder="(not set)">
+                    <button type="submit">Save</button>
+                    <span class="msg" data-for="email"></span>
+                </form>
+            </section>
+
+            <section class="card">
+                <h3>Password</h3>
+                <p class="hint" id="password-hint">Change the password used to log in.</p>
+                <form id="form-password">
+                    <div class="row">
+                        <input type="password" id="current-password" placeholder="Current password" autocomplete="current-password">
+                    </div>
+                    <div class="row">
+                        <input type="password" id="new-password" placeholder="New password (8+ chars)" autocomplete="new-password" required>
+                        <button type="submit">Update password</button>
+                        <span class="msg" data-for="password"></span>
+                    </div>
+                </form>
+            </section>
+
+            <section class="card">
+                <h3>Google</h3>
+                <p class="hint" id="google-hint">Link your Google account to sign in without a password.</p>
+                <div class="row">
+                    <button id="btn-link-google" class="google-btn">
+                        <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true">
+                            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                        </svg>
+                        <span id="google-btn-label">Link Google</span>
+                    </button>
+                    <span class="msg" data-for="google"></span>
+                </div>
+            </section>
+
+            <section class="card danger">
+                <h3>Delete account</h3>
+                <p class="hint">Permanently deletes your account and all stored grademap data. This cannot be undone.</p>
+                <form id="form-delete">
+                    <div class="row">
+                        <input type="password" id="delete-password" placeholder="Password (if set)" autocomplete="current-password">
+                        <button type="submit" class="danger-btn">Delete my account</button>
+                        <span class="msg" data-for="delete"></span>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </main>
+
+    <p id="watermark"><i>Copyright © 2026 Siwool Um</i></p>
+    <dm-button></dm-button>
+
+    <script src="js/components.js"></script>
+    <script src="js/global.js"></script>
+    <script src="js/account.js"></script>
+</body>
+
+</html>

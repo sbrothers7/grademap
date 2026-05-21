@@ -1,0 +1,84 @@
+.account-nav { font-size: 13px; }
+.account-nav a { color: var(--gm-muted); border-bottom: none; }
+.account-nav a:hover { color: var(--text); border-bottom: none; }
+
+.page-title { margin: 12px 0 24px; font-size: 22px; }
+
+.card {
+    border: 1px solid var(--gm-border);
+    border-radius: 5px;
+    background: var(--gm-surface);
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    box-shadow:
+        0 1px 2px color-mix(in srgb, var(--text) 5%, transparent),
+        0 2px 6px color-mix(in srgb, var(--text) 4%, transparent);
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+.card h3 { margin: 0 0 4px; font-size: 15px; }
+
+.card .hint {
+    color: var(--gm-muted);
+    font-size: 13px;
+    margin: 0 0 12px;
+}
+
+.card code {
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    font-size: 12px;
+    background: var(--gm-surface-hi);
+    padding: 1px 4px;
+    border-radius: 3px;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+.row:last-child { margin-bottom: 0; }
+
+.card input[type="text"],
+.card input[type="email"],
+.card input[type="password"] {
+    padding: 8px 11px;
+    border: 1px solid var(--gm-border);
+    background: var(--bg);
+    color: var(--text);
+    border-radius: 3px;
+    font: inherit;
+    font-size: 14px;
+    text-align: left;
+    min-width: 220px;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+.card input:focus { outline: none; border-color: var(--gm-border-hi); }
+
+.card button {
+    margin: 0;
+    padding: 8px 14px;
+    border-radius: 3px;
+    background: var(--gm-surface-hi);
+    color: var(--text);
+    font: inherit;
+    font-size: 13px;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+.card button:hover { background: var(--gm-border); transform: none; }
+.card button:active { transform: none; }
+
+.google-btn { display: inline-flex !important; align-items: center; gap: 8px; }
+
+.danger { border-color: color-mix(in srgb, var(--accent) 35%, var(--gm-border)); }
+.danger-btn {
+    background: color-mix(in srgb, var(--accent) 15%, transparent) !important;
+    color: var(--accent) !important;
+}
+.danger-btn:hover { background: color-mix(in srgb, var(--accent) 28%, transparent) !important; }
+
+.msg { font-size: 12px; color: var(--gm-muted); }
+.msg.ok { color: #3cb944; }
+.msg.error { color: var(--accent); }

@@ -1,0 +1,350 @@
+:root {
+    --bg: white;
+    --text: rgb(30, 30, 30);
+    --btn-bg: #e3e3e3;
+    --btn-text: inherit;
+    --btn-hover-bg: #303030;
+    --btn-hover-text: white;
+    --border: rgb(30, 30, 30);
+    --private-bg: #e1e1e1;
+    --private-text: transparent;
+    --private-hover-text: black;
+    --disabled-bg: lightgrey;
+    --disabled-text: #555;
+    --accent: #E24B4A;
+}
+
+.dark {
+    --bg: rgb(30, 30, 30);
+    --text: white;
+    --btn-bg: #404040;
+    --btn-text: white;
+    --btn-hover-bg: #e3e3e3;
+    --btn-hover-text: black;
+    --border: white;
+    --private-bg: #303030;
+    --private-text: transparent;
+    --private-hover-text: white;
+}
+
+body {
+    padding: 20px 40px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    color: var(--text);
+    background-color: var(--bg);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+h1,
+h2,
+h3 {
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+p,
+li {
+    font-size: 14px;
+    margin: 5px 0;
+    font-weight: 300;
+    line-height: 1.8;
+}
+
+summary {
+    font-size: 18px;
+    line-height: 1.8;
+    font-weight: 600;
+    padding: 0;
+}
+
+summary.version-group {
+    cursor: pointer;
+    margin-bottom: 1em;
+    text-transform: uppercase;
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    color: #666;
+    margin-bottom: 0.75rem;
+    user-select: none;
+
+}
+
+summary.version-group:hover {
+    text-decoration: underline;
+}
+
+summary::marker {
+    color: #666;
+    font-size: 14px;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 13px;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s;
+}
+
+a:hover {
+    border-bottom-color: var(--accent);
+}
+
+button {
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--btn-bg);
+    color: var(--btn-text);
+    margin: 10px 0;
+    padding: 5px;
+    transition: background-color 0.3s, color 0.3s, transform 0.3s;
+}
+
+button:hover {
+    background-color: var(--btn-hover-bg);
+    color: var(--btn-hover-text);
+    transform: scale(1.02);
+}
+
+button:active {
+    transform: scale(1.1);
+}
+
+
+table {
+    border-collapse: collapse;
+    margin: 20px 0;
+    width: 100%;
+    overflow: hidden;
+}
+
+caption {
+    font-weight: 700;
+    font-size: 20px;
+    padding: 0 0 0.75rem 0;
+    text-align: left;
+}
+
+th {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #888;
+    padding: 8px 12px;
+    border: none;
+    border-bottom: 0.5px solid var(--border);
+    text-align: left;
+}
+
+td {
+    padding: 7px 12px;
+    font-size: 14px;
+    border: none;
+    border-bottom: 0.5px solid var(--border);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+table tr:hover td {
+    background: rgba(128, 128, 128, 0.07)
+}
+
+table.result th {
+    color: var(--accent);
+}
+
+.result-td {
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    padding: 10px 12px;
+    height: 20px;
+    width: 50%;
+}
+
+#results .result-td {
+    font-size: 20px;
+}
+
+.clearbtn {
+    font-size: 13px;
+    background: none;
+    border-radius: 6px;
+    padding: 5px 14px;
+    color: #888;
+    width: auto;
+    margin: 0;
+}
+
+.clearbtn:hover {
+    background: none;
+    color: var(--text);
+    transform: none;
+}
+
+.add-btn {
+    height: 24px;
+    border-radius: 2px;
+}
+
+input {
+    font-family: 'Inter', sans-serif;
+    border: none;
+    border-radius: 0;
+    padding: 5px 10px;
+    color: var(--text);
+    background-color: transparent;
+    text-align: center;
+    transition: background-color 0.3s, color 0.3s;
+    outline: none;
+}
+
+td input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+label {
+    font-size: 14px;
+    font-weight: 300;
+    user-select: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input.addRow {
+    border: 1px solid var(--border);
+    width: 1.2em;
+    padding: 2px;
+}
+
+#darkmode {
+    position: fixed;
+    right: 1.2em;
+    bottom: 1em;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    line-height: 0;
+}
+
+#darkmode:hover {
+    transform: scale(1.1);
+}
+
+#darkmode:active {
+    transform: scale(1.2);
+}
+
+#watermark {
+    position: fixed;
+    bottom: 2em;
+    text-align: center;
+    font-size: 8px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.section {
+    display: block;
+    margin: 1em;
+}
+
+.container {
+    display: flex;
+    justify-content: space-around;
+    gap: 2em;
+    margin-bottom: 3em;
+}
+
+@media (max-width: 1100px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .container>.section {
+        width: max(60%, 325px);
+        min-width: 0;
+        margin: 0;
+    }
+}
+
+*:disabled {
+    background-color: var(--disabled-bg);
+    color: var(--disabled-text);
+}
+
+.header {
+    align-items: top;
+    display: flex;
+    justify-content: space-between;
+    gap: 3em;
+}
+
+.center {
+    display: flex;
+    justify-content: space-around;
+}
+
+.private {
+    color: var(--private-text) !important;
+    background-color: var(--private-bg) !important;
+}
+
+.private>input {
+    opacity: 0;
+}
+
+.private:hover {
+    color: var(--private-hover-text) !important;
+    background-color: transparent !important;
+}
+
+.private:hover>input {
+    opacity: 1;
+}
+
+.inlineflex {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.inlineflex p {
+    font-size: 13px;
+}
+
+.inlineflex input {
+    border: 0.5px solid var(--border);
+}
+
+.no-transition,
+.no-transition * {
+    transition: none !important;
+}
+
+@media (max-width: 768px) {
+
+    table,
+    th,
+    td {
+        border-width: 1px;
+    }
+}
