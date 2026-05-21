@@ -39,6 +39,11 @@ function finalsApplies(type, sem) {
 function finalsLabel(type) {
     return type === 'pe' ? 'Dragon Active' : 'Finals';
 }
+// Credits per subject — used to weight the overall percent and GPA.
+const HALF_CREDIT = new Set(['korean language', 'korean social studies']);
+function subjectCredits(name) {
+    return HALF_CREDIT.has((name || '').trim().toLowerCase()) ? 0.5 : 1;
+}
 
 // ===== persistence =====
 const saveLocal = () => localStorage.setItem(LS_KEY, JSON.stringify(state.grademap));
@@ -564,34 +569,40 @@ function recomputeTarget(node, subj) {
 
 function renderSummary() {
     const subjects = state.grademap.subjects;
-    const percents = subjects.map(subjectPercent).filter(p => !Number.isNaN(p));
 
-    const overall = percents.length ? percents.reduce((a, b) => a + b, 0) / percents.length : NaN;
-    document.getElementById('overall-pct').textContent =
-        Number.isNaN(overall) ? '—' : `${overall.toFixed(1)} (${percentToLetter(overall)})`;
+    // Credit-weighted aggregates. Korean Language and Korean Social Studies
+    // count as 0.5 credits via subjectCredits().
+    let pctSum = 0, pctCredits = 0;
+    let unwSum = 0, wSum = 0, gpaCredits = 0;
 
-    const pointsUnweighted = [];
-    const pointsWeighted = [];
     subjects.forEach(subj => {
         const pct = subjectPercent(subj);
         if (Number.isNaN(pct)) return;
+        const credits = subjectCredits(subj.name);
+        pctSum += pct * credits;
+        pctCredits += credits;
+
         const pts = letterToPoint(percentToLetter(pct));
         if (Number.isNaN(pts)) return;
-        pointsUnweighted.push(pts);
-        pointsWeighted.push(detectSubjectType(subj.name) === 'ap' ? pts + 1 : pts);
+        const wPts = detectSubjectType(subj.name) === 'ap' ? pts + 1 : pts;
+        unwSum += pts * credits;
+        wSum += wPts * credits;
+        gpaCredits += credits;
     });
+
+    const overall = pctCredits ? pctSum / pctCredits : NaN;
+    document.getElementById('overall-pct').textContent =
+        Number.isNaN(overall) ? '—' : `${overall.toFixed(1)} (${percentToLetter(overall)})`;
 
     const setVal = (id, text, empty) => {
         const el = document.getElementById(id);
         el.classList.toggle('empty', !!empty);
         el.textContent = text;
     };
-    const fmt = arr => arr.length ? (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(2) : null;
-    const u = fmt(pointsUnweighted);
-    const w = fmt(pointsWeighted);
+    const u = gpaCredits ? (unwSum / gpaCredits).toFixed(2) : null;
+    const w = gpaCredits ? (wSum / gpaCredits).toFixed(2) : null;
     setVal('gpa-unweighted', u ?? '—', u === null);
     setVal('gpa-weighted', w ?? '—', w === null);
-    // also tag overall-pct empty state
     document.getElementById('overall-pct').classList.toggle('empty', Number.isNaN(overall));
 }
 
