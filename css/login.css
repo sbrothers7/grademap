@@ -2,8 +2,46 @@
 
 .login-wrap {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
     padding: 40px 20px 80px;
+}
+
+.login-explainer {
+    width: 100%;
+    max-width: 380px;
+    font-size: 13px;
+    color: var(--gm-muted);
+    line-height: 1.55;
+}
+
+.login-explainer summary {
+    cursor: pointer;
+    color: var(--text);
+    font-weight: 500;
+    padding: 6px 0;
+    user-select: none;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.login-explainer summary::-webkit-details-marker { display: none; }
+
+.login-explainer summary::before {
+    content: '▸';
+    font-size: 10px;
+    transition: transform 0.15s;
+}
+
+.login-explainer[open] summary::before {
+    transform: rotate(90deg);
+}
+
+.login-explainer p {
+    margin: 8px 0 0;
 }
 
 .login-card {
