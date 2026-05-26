@@ -93,7 +93,9 @@
 
         <h2>Sessions and auto-logout</h2>
         <p>Sessions last 10 minutes from the most recent refresh. You can extend a session from the header, or log out
-            manually. When the timer runs out, the session is invalidated on the server and the cookie is cleared.</p>
+            manually. When the timer runs out, the session is invalidated on the server, the cookie is cleared, and
+            the expired session row is deleted from the database (immediately on next access, and on an hourly basis).
+        </p>
 
         <h2>Deleting your account</h2>
         <p>Visit your account page and use "Delete account". This removes your user record, your grademap, and all

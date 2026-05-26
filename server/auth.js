@@ -141,9 +141,24 @@ export async function createSession(userId) {
 export async function getSession(sessionId) {
   if (!sessionId) return null;
   const session = await db.get('SELECT * FROM sessions WHERE id = ?', [sessionId]);
-  if (!session || session.expires_at < Date.now()) return null;
+  if (!session) return null;
+  if (session.expires_at < Date.now()) {
+    // Drop the dead row so it can't pile up between scheduled purges.
+    await db.run('DELETE FROM sessions WHERE id = ?', [sessionId]);
+    return null;
+  }
   return session;
 }
+
+// Periodic cleanup of expired sessions. Runs once on startup and every hour.
+export async function purgeExpiredSessions() {
+  await db.run('DELETE FROM sessions WHERE expires_at < ?', [Date.now()]);
+}
+purgeExpiredSessions().catch((e) => console.error('initial session purge failed:', e));
+setInterval(
+  () => purgeExpiredSessions().catch((e) => console.error('session purge failed:', e)),
+  60 * 60 * 1000,
+).unref();
 
 export async function getSessionUser(sessionId) {
   const session = await getSession(sessionId);
