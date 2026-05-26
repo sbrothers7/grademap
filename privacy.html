@@ -43,7 +43,10 @@
 <body class="gm-body">
     <header class="gm-header">
         <div class="gm-header-left">
-            <h1 class="gm-title"><a href="/">GradeMap</a></h1>
+            <div class="gm-title-block">
+                <h1 class="gm-title"><a href="/">GradeMap</a></h1>
+                <site-version></site-version>
+            </div>
             <a href="/" class="nav-link">← Back</a>
         </div>
     </header>
@@ -78,7 +81,8 @@
                 refresh.</li>
             <li>Your grademap data in localStorage, so the site works without an account. While you are signed in,
                 localStorage is not modified.</li>
-            <li>Your theme and privacy-mode preference in localStorage.</li>
+            <li>Your display preferences in localStorage: theme, privacy mode, and decimal precision.</li>
+            <li>The collapsed/expanded state of each subject card, stored alongside the grademap.</li>
         </ul>
 
         <h2>Third parties</h2>

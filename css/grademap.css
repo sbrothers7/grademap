@@ -39,6 +39,80 @@
     border-bottom-color: var(--gm-border-hi);
 }
 
+/* ===== precision slider ===== */
+.precision-control {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--gm-muted);
+    user-select: none;
+}
+
+.precision-control input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    width: 80px;
+    height: 14px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.precision-control input[type="range"]::-webkit-slider-runnable-track {
+    height: 3px;
+    background: var(--gm-border-hi);
+    border-radius: 999px;
+}
+
+.precision-control input[type="range"]::-moz-range-track {
+    height: 3px;
+    background: var(--gm-border-hi);
+    border-radius: 999px;
+    border: none;
+}
+
+.precision-control input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: none;
+    margin-top: -5.5px;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.precision-control input[type="range"]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: none;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.precision-control input[type="range"]:hover::-webkit-slider-thumb,
+.precision-control input[type="range"]:active::-webkit-slider-thumb {
+    transform: scale(1.15);
+}
+
+.precision-control input[type="range"]:hover::-moz-range-thumb,
+.precision-control input[type="range"]:active::-moz-range-thumb {
+    transform: scale(1.15);
+}
+
+.precision-control #precision-value {
+    font-variant-numeric: tabular-nums;
+    min-width: 0.6em;
+    color: var(--text);
+    font-weight: 500;
+    font-size: 12px;
+}
+
 /* ===== privacy mode switch ===== */
 .privacy-switch {
     display: inline-flex;
@@ -175,11 +249,53 @@
 
 /* ===== header ===== */
 .gm-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--bg);
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 24px;
-    padding: 28px 32px 20px;
+    padding: 20px 32px 14px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--gm-border);
+}
+
+/* Two-row variant (index.html). Left side spans both rows and is vertically
+   centered against them; account widget sits row 1, controls row 2.
+   Other pages don't have .gm-header-controls and keep the single-row flex. */
+.gm-header:has(.gm-header-controls) {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+        "left   account"
+        "left   controls";
+    align-items: center;
+    column-gap: 24px;
+    row-gap: 12px;
+    padding-top: 16px;
+    padding-bottom: 14px;
+}
+
+.gm-header:has(.gm-header-controls) .gm-header-left {
+    grid-area: left;
+}
+
+.gm-header:has(.gm-header-controls) .account-widget {
+    grid-area: account;
+    justify-self: end;
+}
+
+.gm-header:has(.gm-header-controls) .gm-header-controls {
+    grid-area: controls;
+    justify-self: end;
+}
+
+.gm-header-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
     flex-wrap: wrap;
 }
 
@@ -197,6 +313,29 @@
 
 .gm-title a:hover {
     border-bottom: none;
+}
+
+.gm-title-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1;
+    gap: 2px;
+}
+
+.site-version {
+    font-size: 10px;
+    color: var(--gm-muted);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+.site-version:hover {
+    color: var(--text);
+    border-bottom-color: var(--gm-border-hi);
 }
 
 /* account widget — scope inputs/buttons so global resets don't apply */
@@ -276,7 +415,7 @@
 
 /* ===== main layout ===== */
 .gm-main {
-    padding: 0 32px 60px;
+    padding: 24px 32px 60px;
 }
 
 .subjects-list {
@@ -299,17 +438,30 @@
 
 /* ===== card appear ===== */
 @keyframes subject-appear {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
+
 .subject {
     animation: subject-appear 0.3s ease-out;
 }
 
 /* ===== loading skeleton (phase 1) ===== */
 @keyframes skeleton-pulse {
-    0%, 100% { opacity: 1; }
-    50%      { opacity: 0.4; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
 }
 
 .subject.loading .score-cell input,
@@ -348,8 +500,13 @@
 
 /* ===== field fade-in (phase 2) ===== */
 @keyframes field-fade-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 .subject.fade-fields .subject-name,
@@ -528,6 +685,69 @@
 
 .del-subject:active {
     transform: none;
+}
+
+/* ===== collapse toggle ===== */
+.collapse-toggle {
+    margin: 0;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    background: transparent;
+    color: var(--gm-muted);
+    border: 1px solid transparent;
+    transition: background-color 0.2s, color 0.2s, transform 0.2s;
+}
+
+.collapse-toggle:hover {
+    background: var(--gm-surface-hi);
+    color: var(--text);
+    transform: none;
+}
+
+.collapse-toggle:active {
+    transform: none;
+}
+
+.subject.collapsed .collapse-toggle {
+    transform: rotate(-90deg);
+}
+
+/* Grade summary shown only when the card is collapsed. */
+.collapsed-grade {
+    display: none;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--text);
+    margin-left: auto;
+    padding: 2px 8px;
+}
+
+.collapsed-grade.empty {
+    color: var(--gm-muted);
+    font-weight: 500;
+}
+
+.subject.collapsed .collapsed-grade {
+    display: inline-block;
+}
+
+/* When collapsed, hide everything below the header and tighten spacing. */
+.subject.collapsed>.semester-tabs,
+.subject.collapsed>.categories,
+.subject.collapsed>.subject-footer,
+.subject.collapsed>.target-row {
+    display: none;
+}
+
+.subject.collapsed>.subject-header {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
 }
 
 /* ===== categories (formative / summative) ===== */
@@ -895,11 +1115,11 @@
 /* ===== responsive ===== */
 @media (max-width: 600px) {
     .gm-header {
-        padding: 20px 18px 14px;
+        padding: 14px 18px 12px;
     }
 
     .gm-main {
-        padding: 0 18px 40px;
+        padding: 18px 18px 40px;
     }
 
     .account-widget input {

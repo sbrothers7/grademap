@@ -11,6 +11,7 @@ const blankSem = () => ({
 const blankSubject = () => ({
     name: '',
     activeSem: 's1',
+    collapsed: false,
     s1: blankSem(),
     s2: blankSem(),
 });
@@ -275,6 +276,21 @@ function renderSubjects({ loading = false, animate = false } = {}) {
             scheduleSave();
         });
 
+        // collapse toggle
+        const toggleBtn = node.querySelector('.collapse-toggle');
+        const applyCollapsed = () => {
+            const on = !!subj.collapsed;
+            node.classList.toggle('collapsed', on);
+            toggleBtn.setAttribute('aria-expanded', String(!on));
+            toggleBtn.title = on ? 'Expand' : 'Collapse';
+        };
+        toggleBtn.onclick = () => {
+            subj.collapsed = !subj.collapsed;
+            applyCollapsed();
+            scheduleSave();
+        };
+        applyCollapsed();
+
         renderActiveSemester(node, subj);
         list.appendChild(node);
     });
@@ -443,11 +459,11 @@ function semesterPercent(subj, semKey) {
     return num / den;
 }
 
-// Returns the active weights map for a (subject, semester). Used by both
-// the grade calc and the min-score solver, so they stay in sync.
-// `assumeFinalsPresent`: if true and finals are allowed, include finals in
-// the weights even if the score isn't entered yet (used when solving "min
-// for finals").
+// Returns the active weights map for a (subject, semester)
+// Used by both grade calc and the min-score solver, so they stay in sync
+// `assumeFinalsPresent`: if true and finals are allowed, 
+// include finals in the weights even if the score isn't entered yet 
+// (used when solving "min for finals")
 function weightsFor(subj, semKey, { assumeFinalsPresent = false } = {}) {
     const type = detectSubjectType(subj.name);
     const finalsAllowed = finalsApplies(type, semKey);
@@ -460,9 +476,7 @@ function weightsFor(subj, semKey, { assumeFinalsPresent = false } = {}) {
         : { formative: 20, summative: 60 };
 }
 
-// Parse the user's target input. Accepts "A-" / "B+" / "90" / "92.5".
-// Letter targets resolve to the boundary itself, since the grader treats
-// `percent ≥ boundary` as the letter.
+// parse target input
 function parseTarget(raw) {
     const t = String(raw || '').trim();
     if (!t) return NaN;
@@ -517,14 +531,18 @@ function recomputeSubject(node, subj) {
     const fAvg = mean(sem.formative);
     const sAvg = mean(sem.summative);
     node.querySelector('.category[data-cat="formative"] .cat-avg').textContent =
-        Number.isNaN(fAvg) ? '' : fAvg.toFixed(1);
+        Number.isNaN(fAvg) ? '' : fAvg.toFixed(precision);
     node.querySelector('.category[data-cat="summative"] .cat-avg').textContent =
-        Number.isNaN(sAvg) ? '' : sAvg.toFixed(1);
+        Number.isNaN(sAvg) ? '' : sAvg.toFixed(precision);
 
     const pct = semesterPercent(subj, subj.activeSem);
+    const display = Number.isNaN(pct) ? '—' : `${pct.toFixed(precision)} (${percentToLetter(pct)})`;
     const fg = node.querySelector('.final-grade');
     fg.classList.toggle('empty', Number.isNaN(pct));
-    fg.textContent = Number.isNaN(pct) ? '—' : `${pct.toFixed(1)} (${percentToLetter(pct)})`;
+    fg.textContent = display;
+    const cg = node.querySelector('.collapsed-grade');
+    cg.classList.toggle('empty', Number.isNaN(pct));
+    cg.textContent = display;
 
     recomputeTarget(node, subj);
 }
@@ -555,13 +573,13 @@ function recomputeTarget(node, subj) {
     }
 
     if (need > 100) {
-        out.textContent = `${need.toFixed(1)} (impossible)`;
+        out.textContent = `${need.toFixed(precision)} (impossible)`;
         out.classList.add('warn');
     } else if (need <= 0) {
         out.textContent = 'any score works';
         out.classList.remove('warn');
     } else {
-        out.textContent = need.toFixed(1);
+        out.textContent = need.toFixed(precision);
         out.classList.remove('warn');
     }
 }
@@ -591,15 +609,16 @@ function renderSummary() {
 
     const overall = pctCredits ? pctSum / pctCredits : NaN;
     document.getElementById('overall-pct').textContent =
-        Number.isNaN(overall) ? '—' : `${overall.toFixed(1)} (${percentToLetter(overall)})`;
+        Number.isNaN(overall) ? '—' : `${overall.toFixed(precision)} (${percentToLetter(overall)})`;
 
     const setVal = (id, text, empty) => {
         const el = document.getElementById(id);
         el.classList.toggle('empty', !!empty);
         el.textContent = text;
     };
-    const u = gpaCredits ? (unwSum / gpaCredits).toFixed(2) : null;
-    const w = gpaCredits ? (wSum / gpaCredits).toFixed(2) : null;
+    const gpaPrec = 4;
+    const u = gpaCredits ? (unwSum / gpaCredits).toFixed(gpaPrec) : null;
+    const w = gpaCredits ? (wSum / gpaCredits).toFixed(gpaPrec) : null;
     setVal('gpa-unweighted', u ?? '—', u === null);
     setVal('gpa-weighted', w ?? '—', w === null);
     document.getElementById('overall-pct').classList.toggle('empty', Number.isNaN(overall));
@@ -629,6 +648,33 @@ document.getElementById('privacy-toggle').addEventListener('change', (e) => {
     applyPrivacy(e.target.checked);
 });
 applyPrivacy(localStorage.getItem(PRIVACY_KEY) === 'true');
+
+// ===== precision (decimals shown for scores/grades) =====
+const PRECISION_KEY = 'precision';
+let precision = clampPrecision(parseInt(localStorage.getItem(PRECISION_KEY) ?? '1', 10));
+
+function clampPrecision(n) {
+    return Number.isFinite(n) ? Math.min(4, Math.max(0, n)) : 1;
+}
+
+function refreshDisplayedValues() {
+    document.querySelectorAll('.subject').forEach((node, i) => {
+        const subj = state.grademap.subjects[i];
+        if (subj) recomputeSubject(node, subj);
+    });
+    renderSummary();
+}
+
+const precisionSlider = document.getElementById('precision-slider');
+const precisionDisplay = document.getElementById('precision-value');
+precisionSlider.value = String(precision);
+precisionDisplay.textContent = String(precision);
+precisionSlider.addEventListener('input', (e) => {
+    precision = clampPrecision(parseInt(e.target.value, 10));
+    precisionDisplay.textContent = String(precision);
+    localStorage.setItem(PRECISION_KEY, String(precision));
+    refreshDisplayedValues();
+});
 
 (async function init() {
     await fetchMe();

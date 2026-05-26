@@ -11,16 +11,26 @@
 <body class="gm-body">
 	<header class="gm-header">
 		<div class="gm-header-left">
-			<h1 class="gm-title"><a href="/">GradeMap</a></h1>
+			<div class="gm-title-block">
+				<h1 class="gm-title"><a href="/">GradeMap</a></h1>
+				<site-version></site-version>
+			</div>
 			<a href="patch_notes.html" class="nav-link">Patch Notes</a>
 			<a href="privacy.html" class="nav-link">Privacy Statement</a>
 		</div>
-		<label class="privacy-switch">
-			<span class="switch-label">Privacy mode</span>
-			<input type="checkbox" id="privacy-toggle">
-			<span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
-		</label>
 		<div id="account-widget" class="account-widget"></div>
+		<div class="gm-header-controls">
+			<label class="precision-control" title="Decimal places shown for scores and grades">
+				<span>Precision</span>
+				<input type="range" id="precision-slider" min="0" max="4" step="1" value="1">
+				<span id="precision-value">1</span>
+			</label>
+			<label class="privacy-switch">
+				<span class="switch-label">Privacy mode</span>
+				<input type="checkbox" id="privacy-toggle">
+				<span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+			</label>
+		</div>
 	</header>
 
 	<main class="gm-main">
@@ -58,7 +68,14 @@
 					<ul class="subject-suggestions hidden" role="listbox"></ul>
 				</div>
 				<span class="subject-type-badge" data-type=""></span>
+				<span class="collapsed-grade"></span>
 				<button class="del-subject" title="Remove subject" aria-label="Remove subject">×</button>
+				<button class="collapse-toggle" title="Collapse" aria-label="Collapse" aria-expanded="true">
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+						stroke-linecap="round" stroke-linejoin="round">
+						<polyline points="6 9 12 15 18 9"></polyline>
+					</svg>
+				</button>
 			</header>
 
 			<nav class="semester-tabs" role="tablist">
@@ -103,7 +120,7 @@
 
 			<div class="target-row">
 				<span class="cat-label">Target</span>
-				<input class="target-input" type="text" placeholder="A or 93" autocomplete="off" maxlength="6">
+				<input class="target-input" type="text" placeholder="A or 92.5" autocomplete="off" maxlength="6">
 				<span class="target-for">on</span>
 				<select class="target-cat">
 					<option value="formative">Formative</option>
