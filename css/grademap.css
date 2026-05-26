@@ -260,6 +260,7 @@
     padding: 20px 32px 14px;
     flex-wrap: wrap;
     border-bottom: 1px solid var(--gm-border);
+    transition: background-color 0.3s, border-color 0.3s;
 }
 
 /* Two-row variant (index.html). Left side spans both rows and is vertically
@@ -663,6 +664,36 @@
     transform: none;
 }
 
+/* Semester selector dropdown (used in place of tabs for elective subjects). */
+.semester-select {
+    margin: 0 0 14px;
+    padding: 5px 28px 5px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+    background: var(--gm-surface-hi);
+    border: 1px solid var(--gm-border);
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: inherit;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 12px;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.semester-select:hover {
+    border-color: var(--gm-border-hi);
+}
+
+.semester-select:focus {
+    outline: none;
+    border-color: var(--gm-border-hi);
+}
+
 .del-subject {
     margin: 0;
     width: 28px;
@@ -1031,6 +1062,7 @@
 
 .add-subject:hover {
     background: var(--gm-border);
+    color: var(--text);
     transform: none;
 }
 
@@ -1057,15 +1089,56 @@
     padding-top: 22px;
 }
 
+.summary-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
 .summary-title {
-    margin: 0 0 14px;
+    margin: 0;
     font-size: 17px;
+}
+
+.summary-toggle {
+    margin: 0;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    background: transparent;
+    color: var(--gm-muted);
+    border: 1px solid var(--gm-border);
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
+}
+
+.summary-toggle:hover {
+    color: var(--text);
+    border-color: var(--gm-border-hi);
+    background: var(--gm-surface-hi);
+}
+
+.summary-toggle .summary-toggle-chevron {
+    transition: transform 0.2s;
+}
+
+.summary-toggle[aria-expanded="true"] .summary-toggle-chevron {
+    transform: rotate(180deg);
 }
 
 .summary-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 12px;
+}
+
+.summary-grid.summary-collapsed .semester-card {
+    display: none;
 }
 
 .summary-card {

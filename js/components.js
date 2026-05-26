@@ -29,7 +29,7 @@ class SiteWatermark extends HTMLElement {
 }
 customElements.define("site-watermark", SiteWatermark);
 
-const SITE_VERSION = 'v1.0.2';
+const SITE_VERSION = 'v1.0.2-1';
 class SiteVersion extends HTMLElement {
     connectedCallback() {
         this.innerHTML = `<a href="patch_notes.html" class="site-version" title="View patch notes">${SITE_VERSION}</a>`;

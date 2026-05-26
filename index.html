@@ -42,8 +42,17 @@
 		</div>
 
 		<section class="gm-summary">
-			<h2 class="summary-title">Summary</h2>
-			<div class="summary-grid">
+			<div class="summary-head">
+				<h2 class="summary-title">Summary</h2>
+				<button id="toggle-semesters" class="summary-toggle" aria-expanded="false">
+					Show semester breakdown
+					<svg class="summary-toggle-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none"
+						stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+						<polyline points="6 9 12 15 18 9"></polyline>
+					</svg>
+				</button>
+			</div>
+			<div class="summary-grid summary-collapsed">
 				<div class="summary-card">
 					<span class="label">Unweighted GPA</span>
 					<span id="gpa-unweighted" class="value">—</span>
@@ -55,6 +64,30 @@
 				<div class="summary-card">
 					<span class="label">Average</span>
 					<span id="overall-pct" class="value">—</span>
+				</div>
+				<div class="summary-card semester-card">
+					<span class="label">S1 Unweighted GPA</span>
+					<span id="gpa-unweighted-s1" class="value">—</span>
+				</div>
+				<div class="summary-card semester-card">
+					<span class="label">S1 Weighted GPA</span>
+					<span id="gpa-weighted-s1" class="value">—</span>
+				</div>
+				<div class="summary-card semester-card">
+					<span class="label">S1 Average</span>
+					<span id="overall-pct-s1" class="value">—</span>
+				</div>
+				<div class="summary-card semester-card">
+					<span class="label">S2 Unweighted GPA</span>
+					<span id="gpa-unweighted-s2" class="value">—</span>
+				</div>
+				<div class="summary-card semester-card">
+					<span class="label">S2 Weighted GPA</span>
+					<span id="gpa-weighted-s2" class="value">—</span>
+				</div>
+				<div class="summary-card semester-card">
+					<span class="label">S2 Average</span>
+					<span id="overall-pct-s2" class="value">—</span>
 				</div>
 			</div>
 		</section>
@@ -82,6 +115,10 @@
 				<button class="sem-tab" data-sem="s1" role="tab" aria-selected="true">Semester 1</button>
 				<button class="sem-tab" data-sem="s2" role="tab" aria-selected="false">Semester 2</button>
 			</nav>
+			<select class="semester-select hidden" aria-label="Semester">
+				<option value="s1">Semester 1</option>
+				<option value="s2">Semester 2</option>
+			</select>
 
 			<div class="categories">
 				<div class="category" data-cat="formative">

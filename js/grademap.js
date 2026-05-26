@@ -46,6 +46,22 @@ function subjectCredits(name) {
     return HALF_CREDIT.has((name || '').trim().toLowerCase()) ? 0.5 : 1;
 }
 
+// Electives are single-semester by default. Music and language electives run
+// the full year — list them here.
+const YEARLONG_ELECTIVES = new Set([
+    // music
+    'advanced string orchestra', 'chamber choir', 'choir', 'concert band',
+    'modern band', 'solo vocal technique', 'string orchestra', 'wind ensemble',
+    // languages
+    'chinese', 'heritage chinese', 'korean language', 'spanish',
+    // other yearlong electives
+    'korean social studies',
+]);
+function hasSecondSemester(name, type) {
+    if (type !== 'elective') return true;
+    return YEARLONG_ELECTIVES.has((name || '').trim().toLowerCase());
+}
+
 // ===== persistence =====
 const saveLocal = () => localStorage.setItem(LS_KEY, JSON.stringify(state.grademap));
 const loadLocal = () => {
@@ -236,13 +252,20 @@ function renderSubjects({ loading = false, animate = false } = {}) {
             scheduleSave();
         };
 
-        // semester tabs
+        // semester tabs (non-electives)
         node.querySelectorAll('.sem-tab').forEach(tab => {
             tab.addEventListener('click', () => {
                 subj.activeSem = tab.dataset.sem;
                 renderActiveSemester(node, subj);
                 scheduleSave();
             });
+        });
+
+        // semester select (electives)
+        node.querySelector('.semester-select').addEventListener('change', (e) => {
+            subj.activeSem = e.target.value;
+            renderActiveSemester(node, subj);
+            scheduleSave();
         });
 
         // add-score buttons (these target the currently-active semester)
@@ -306,9 +329,21 @@ function updateBadge(badgeEl, type) {
 
 function renderActiveSemester(node, subj) {
     const type = detectSubjectType(subj.name);
+
+    // Single-semester subjects (most electives): force s1.
+    const twoSem = hasSecondSemester(subj.name, type);
+    if (!twoSem) subj.activeSem = 's1';
     const sem = subj.activeSem;
 
-    // tabs visual state
+    // Electives use a select dropdown; everything else uses tabs.
+    const tabsNav = node.querySelector('.semester-tabs');
+    const semSelect = node.querySelector('.semester-select');
+    const useSelect = type === 'elective';
+    tabsNav.classList.toggle('hidden', useSelect || !twoSem);
+    semSelect.classList.toggle('hidden', !useSelect || !twoSem);
+    semSelect.value = sem;
+
+    // tabs visual state (only matters when tabs are visible)
     node.querySelectorAll('.sem-tab').forEach(tab => {
         const active = tab.dataset.sem === sem;
         tab.classList.toggle('active', active);
@@ -521,7 +556,9 @@ function minScoreFor(subj, semKey, targetCat, desired) {
 
 // Subject-level percent = average of the semesters that have data.
 function subjectPercent(subj) {
-    const ps = ['s1', 's2'].map(k => semesterPercent(subj, k)).filter(p => !Number.isNaN(p));
+    const type = detectSubjectType(subj.name);
+    const sems = hasSecondSemester(subj.name, type) ? ['s1', 's2'] : ['s1'];
+    const ps = sems.map(k => semesterPercent(subj, k)).filter(p => !Number.isNaN(p));
     if (!ps.length) return NaN;
     return ps.reduce((a, b) => a + b, 0) / ps.length;
 }
@@ -536,13 +573,23 @@ function recomputeSubject(node, subj) {
         Number.isNaN(sAvg) ? '' : sAvg.toFixed(precision);
 
     const pct = semesterPercent(subj, subj.activeSem);
-    const display = Number.isNaN(pct) ? '—' : `${pct.toFixed(precision)} (${percentToLetter(pct)})`;
+    const fmtPct = (p) => Number.isNaN(p) ? '—' : `${p.toFixed(precision)} (${percentToLetter(p)})`;
     const fg = node.querySelector('.final-grade');
     fg.classList.toggle('empty', Number.isNaN(pct));
-    fg.textContent = display;
+    fg.textContent = fmtPct(pct);
+
+    // Collapsed preview shows both semesters (or just S1 for single-semester
+    // subjects), so the user can see all grades without expanding.
+    const type = detectSubjectType(subj.name);
+    const twoSem = hasSecondSemester(subj.name, type);
+    const s1 = semesterPercent(subj, 's1');
+    const s2 = semesterPercent(subj, 's2');
     const cg = node.querySelector('.collapsed-grade');
-    cg.classList.toggle('empty', Number.isNaN(pct));
-    cg.textContent = display;
+    const allEmpty = Number.isNaN(s1) && (twoSem ? Number.isNaN(s2) : true);
+    cg.classList.toggle('empty', allEmpty);
+    cg.textContent = twoSem
+        ? `S1 ${fmtPct(s1)} · S2 ${fmtPct(s2)}`
+        : fmtPct(s1);
 
     recomputeTarget(node, subj);
 }
@@ -584,16 +631,13 @@ function recomputeTarget(node, subj) {
     }
 }
 
-function renderSummary() {
-    const subjects = state.grademap.subjects;
-
-    // Credit-weighted aggregates. Korean Language and Korean Social Studies
-    // count as 0.5 credits via subjectCredits().
+// Compute credit-weighted aggregates over a subset of (subject, percent) pairs.
+// `pctOf(subj)` returns the percent for that subject (NaN to skip).
+function aggregate(subjects, pctOf) {
     let pctSum = 0, pctCredits = 0;
     let unwSum = 0, wSum = 0, gpaCredits = 0;
-
     subjects.forEach(subj => {
-        const pct = subjectPercent(subj);
+        const pct = pctOf(subj);
         if (Number.isNaN(pct)) return;
         const credits = subjectCredits(subj.name);
         pctSum += pct * credits;
@@ -606,22 +650,41 @@ function renderSummary() {
         wSum += wPts * credits;
         gpaCredits += credits;
     });
+    return {
+        avg: pctCredits ? pctSum / pctCredits : NaN,
+        unw: gpaCredits ? unwSum / gpaCredits : NaN,
+        wtd: gpaCredits ? wSum / gpaCredits : NaN,
+    };
+}
 
-    const overall = pctCredits ? pctSum / pctCredits : NaN;
-    document.getElementById('overall-pct').textContent =
-        Number.isNaN(overall) ? '—' : `${overall.toFixed(precision)} (${percentToLetter(overall)})`;
+function renderSummary() {
+    const subjects = state.grademap.subjects;
+
+    const overall = aggregate(subjects, subjectPercent);
+    const s1 = aggregate(subjects, (subj) => semesterPercent(subj, 's1'));
+    const s2 = aggregate(subjects, (subj) => {
+        if (!hasSecondSemester(subj.name, detectSubjectType(subj.name))) return NaN;
+        return semesterPercent(subj, 's2');
+    });
 
     const setVal = (id, text, empty) => {
         const el = document.getElementById(id);
         el.classList.toggle('empty', !!empty);
         el.textContent = text;
     };
+    const fmtAvg = (p) => Number.isNaN(p) ? '—' : `${p.toFixed(precision)} (${percentToLetter(p)})`;
     const gpaPrec = 4;
-    const u = gpaCredits ? (unwSum / gpaCredits).toFixed(gpaPrec) : null;
-    const w = gpaCredits ? (wSum / gpaCredits).toFixed(gpaPrec) : null;
-    setVal('gpa-unweighted', u ?? '—', u === null);
-    setVal('gpa-weighted', w ?? '—', w === null);
-    document.getElementById('overall-pct').classList.toggle('empty', Number.isNaN(overall));
+    const fmtGpa = (v) => Number.isNaN(v) ? '—' : v.toFixed(gpaPrec);
+
+    const cells = [
+        ['gpa-unweighted',    overall.unw], ['gpa-weighted',    overall.wtd], ['overall-pct',    overall.avg],
+        ['gpa-unweighted-s1', s1.unw],      ['gpa-weighted-s1', s1.wtd],      ['overall-pct-s1', s1.avg],
+        ['gpa-unweighted-s2', s2.unw],      ['gpa-weighted-s2', s2.wtd],      ['overall-pct-s2', s2.avg],
+    ];
+    for (const [id, val] of cells) {
+        const isAvg = id.startsWith('overall-pct');
+        setVal(id, isAvg ? fmtAvg(val) : fmtGpa(val), Number.isNaN(val));
+    }
 }
 
 // ===== utilities =====
@@ -648,6 +711,23 @@ document.getElementById('privacy-toggle').addEventListener('change', (e) => {
     applyPrivacy(e.target.checked);
 });
 applyPrivacy(localStorage.getItem(PRIVACY_KEY) === 'true');
+
+// ===== summary semester breakdown =====
+const SUMMARY_EXPANDED_KEY = 'summaryExpanded';
+function applySummaryExpanded(on) {
+    const grid = document.querySelector('.summary-grid');
+    const btn = document.getElementById('toggle-semesters');
+    if (!grid || !btn) return;
+    grid.classList.toggle('summary-collapsed', !on);
+    btn.setAttribute('aria-expanded', String(on));
+    btn.firstChild.textContent = on ? 'Hide semester breakdown ' : 'Show semester breakdown ';
+}
+document.getElementById('toggle-semesters').addEventListener('click', () => {
+    const next = !(localStorage.getItem(SUMMARY_EXPANDED_KEY) === 'true');
+    localStorage.setItem(SUMMARY_EXPANDED_KEY, String(next));
+    applySummaryExpanded(next);
+});
+applySummaryExpanded(localStorage.getItem(SUMMARY_EXPANDED_KEY) === 'true');
 
 // ===== precision (decimals shown for scores/grades) =====
 const PRECISION_KEY = 'precision';
