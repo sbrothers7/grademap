@@ -461,8 +461,8 @@ function weightsFor(subj, semKey, { assumeFinalsPresent = false } = {}) {
 }
 
 // Parse the user's target input. Accepts "A-" / "B+" / "90" / "92.5".
-// For letter grades, returns boundary - 0.5 so the rounding-based grader
-// still maps the result to that letter (matches the KISJ rounding policy).
+// Letter targets resolve to the boundary itself, since the grader treats
+// `percent ≥ boundary` as the letter.
 function parseTarget(raw) {
     const t = String(raw || '').trim();
     if (!t) return NaN;
@@ -470,8 +470,7 @@ function parseTarget(raw) {
     if (!Number.isNaN(asNum) && /^[\d.]+$/.test(t)) return asNum;
     const letter = t.toUpperCase();
     const pct = letterToPercent(letter);
-    if (Number.isNaN(pct)) return NaN;
-    return pct - 0.5;
+    return Number.isNaN(pct) ? NaN : pct;
 }
 
 // Given a subject/semester, the target category, and desired percent,

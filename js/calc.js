@@ -91,10 +91,10 @@ const SUBJECTS = [
 	"Yearbook",
 ];
 
-// KISJ grade boundaries: percent ≥ boundary → letter → GPA points.
-const pBoundaries = [98, 93, 90, 87, 83, 80, 77, 73, 70, 67, 63, 60, 50, 0];
+// KISJ grade boundaries: percent ≥ boundary -> letter -> GPA points.
+const pBoundaries = [97.5, 92.5, 89.5, 86.5, 82.5, 79.5, 76.5, 72.5, 69.5, 66.5, 62.5, 59.5, 49.5, 0];
 const letterGrade = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F", "NG"];
-const point       = [4, 4, 3.67, 3.33, 3, 2.67, 2.33, 2, 1.67, 1.33, 1, 0.67, 0, 0];
+const point = [4, 4, 3.67, 3.33, 3, 2.67, 2.33, 2, 1.67, 1.33, 1, 0.67, 0, 0];
 
 function letterToPercent(letter) {
 	const i = letterGrade.indexOf(letter);
@@ -103,7 +103,7 @@ function letterToPercent(letter) {
 
 function percentToLetter(percentage) {
 	for (let i = 0; i < pBoundaries.length; i++) {
-		if (Math.round(percentage) >= pBoundaries[i]) return letterGrade[i];
+		if (percentage >= pBoundaries[i]) return letterGrade[i];
 	}
 	return NaN;
 }
