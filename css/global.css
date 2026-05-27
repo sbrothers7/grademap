@@ -151,6 +151,12 @@ td {
     transition: background-color 0.3s, color 0.3s;
 }
 
+small {
+    font-weight: 200;
+    font-size: 10px;
+    color: #999;
+}
+
 tr:last-child td {
     border-bottom: none;
 }

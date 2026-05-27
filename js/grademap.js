@@ -23,7 +23,7 @@ const CORE_NAMES = new Set([
     'global studies', 'us history',
 ]);
 function detectSubjectType(name) {
-    const n = (name || '').trim().toLowerCase();
+    const n = resolveSubjectName(name);
     if (!n) return 'elective';
     if (n.startsWith('ap ')) return 'ap';
     if (n === 'health and physical education') return 'pe';
@@ -43,7 +43,7 @@ function finalsLabel(type) {
 // Credits per subject — used to weight the overall percent and GPA.
 const HALF_CREDIT = new Set(['korean language', 'korean social studies']);
 function subjectCredits(name) {
-    return HALF_CREDIT.has((name || '').trim().toLowerCase()) ? 0.5 : 1;
+    return HALF_CREDIT.has(resolveSubjectName(name)) ? 0.5 : 1;
 }
 
 // Electives are single-semester by default. Music and language electives run
@@ -59,7 +59,7 @@ const YEARLONG_ELECTIVES = new Set([
 ]);
 function hasSecondSemester(name, type) {
     if (type !== 'elective') return true;
-    return YEARLONG_ELECTIVES.has((name || '').trim().toLowerCase());
+    return YEARLONG_ELECTIVES.has(resolveSubjectName(name));
 }
 
 // ===== persistence =====
@@ -801,7 +801,12 @@ function setupSubjectAutocomplete(input, listEl, onPick) {
     const render = () => {
         const q = input.value.trim().toLowerCase();
         if (!q) { close(); return; }
-        matches = SUBJECTS.filter(s => s.toLowerCase().includes(q)).slice(0, MAX_MATCHES);
+        // Match canonical name or any of its aliases; always suggest the canonical.
+        matches = SUBJECTS.filter(s => {
+            if (s.toLowerCase().includes(q)) return true;
+            const aliases = SUBJECT_ALIASES[s.toLowerCase()] || [];
+            return aliases.some(a => a.toLowerCase().includes(q));
+        }).slice(0, MAX_MATCHES);
         if (matches.length === 0 || (matches.length === 1 && matches[0].toLowerCase() === q)) {
             close(); return;
         }

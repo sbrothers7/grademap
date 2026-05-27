@@ -91,6 +91,54 @@ const SUBJECTS = [
 	"Yearbook",
 ];
 
+// Common short forms that should resolve to the canonical SUBJECTS entry.
+// Keys = canonical subject (lowercase), values = array of accepted aliases.
+const SUBJECT_ALIASES = {
+	'health and physical education': ['pe', 'p.e.', 'phys ed'],
+	'ap human geography': ['ap hug', 'hug'],
+	'ap united states government and politics': ['ap us gov', 'ap gov'],
+	'ap comparative government and politics': ['ap comp gov'],
+	'ap english language and composition': ['ap lang'],
+	'ap english literature and composition': ['ap lit'],
+	'ap environmental science': ['apes', 'ap env sci'],
+	'ap calculus ab': ['ap calc ab'],
+	'ap calculus bc': ['ap calc bc'],
+	'ap chemistry': ['ap chem'],
+	'ap biology': ['ap bio'],
+	'ap physics 1': ['ap phys 1'],
+	'ap physics c': ['ap phys c'],
+	'ap psychology': ['ap psych'],
+	'ap statistics': ['ap stats'],
+	'ap computer science a': ['ap csa', 'csa'],
+	'ap computer science principles': ['ap csp', 'csp'],
+	'ap world history: modern': ['ap world', 'whap'],
+	'ap us history': ['apush', 'ap ush'],
+	'ap chinese language and culture': ['ap chinese'],
+	'ap music theory': ['ap music'],
+	'pre-calculus': ['precalc', 'pre calc'],
+	'multivariable calculus': ['multivar calc', 'multi calc'],
+	'linear algebra': ['lin alg'],
+	'korean social studies': ['kss'],
+	'korean language': ['kl'],
+	'heritage chinese': ['heritage'],
+	'design and technology': ['dt'],
+	'advanced design and technology': ['adv dt'],
+};
+
+// Reverse lookup: alias (lowercase) → canonical (lowercase).
+const ALIAS_TO_CANONICAL = (() => {
+	const out = {};
+	for (const [canonical, aliases] of Object.entries(SUBJECT_ALIASES)) {
+		for (const a of aliases) out[a.toLowerCase()] = canonical;
+	}
+	return out;
+})();
+
+function resolveSubjectName(name) {
+	const n = (name || '').trim().toLowerCase();
+	return ALIAS_TO_CANONICAL[n] || n;
+}
+
 // KISJ grade boundaries: percent ≥ boundary -> letter -> GPA points.
 const pBoundaries = [97.5, 92.5, 89.5, 86.5, 82.5, 79.5, 76.5, 72.5, 69.5, 66.5, 62.5, 59.5, 49.5, 0];
 const letterGrade = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F", "NG"];
