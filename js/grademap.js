@@ -252,20 +252,13 @@ function renderSubjects({ loading = false, animate = false } = {}) {
             scheduleSave();
         };
 
-        // semester tabs (non-electives)
+        // semester tabs
         node.querySelectorAll('.sem-tab').forEach(tab => {
             tab.addEventListener('click', () => {
                 subj.activeSem = tab.dataset.sem;
                 renderActiveSemester(node, subj);
                 scheduleSave();
             });
-        });
-
-        // semester select (electives)
-        node.querySelector('.semester-select').addEventListener('change', (e) => {
-            subj.activeSem = e.target.value;
-            renderActiveSemester(node, subj);
-            scheduleSave();
         });
 
         // add-score buttons (these target the currently-active semester)
@@ -335,13 +328,8 @@ function renderActiveSemester(node, subj) {
     if (!twoSem) subj.activeSem = 's1';
     const sem = subj.activeSem;
 
-    // Electives use a select dropdown; everything else uses tabs.
     const tabsNav = node.querySelector('.semester-tabs');
-    const semSelect = node.querySelector('.semester-select');
-    const useSelect = type === 'elective';
-    tabsNav.classList.toggle('hidden', useSelect || !twoSem);
-    semSelect.classList.toggle('hidden', !useSelect || !twoSem);
-    semSelect.value = sem;
+    tabsNav.classList.toggle('hidden', !twoSem);
 
     // tabs visual state (only matters when tabs are visible)
     node.querySelectorAll('.sem-tab').forEach(tab => {

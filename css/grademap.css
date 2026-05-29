@@ -180,6 +180,7 @@
 .cat-avg,
 .final-grade,
 .target-result,
+.collapsed-grade,
 .summary-card .value {
     transition: background-color 0.3s, color 0.3s;
 }
@@ -202,6 +203,7 @@
 .privacy-on .cat-avg,
 .privacy-on .final-grade,
 .privacy-on .target-result,
+.privacy-on .collapsed-grade,
 .privacy-on .summary-card .value {
     color: transparent !important;
     background-color: var(--gm-redact);
@@ -212,9 +214,11 @@
 .privacy-on .cat-avg:empty,
 .privacy-on .final-grade:empty,
 .privacy-on .target-result:empty,
+.privacy-on .collapsed-grade:empty,
 .privacy-on .summary-card .value:empty,
 .privacy-on .final-grade.empty,
 .privacy-on .target-result.empty,
+.privacy-on .collapsed-grade.empty,
 .privacy-on .summary-card .value.empty {
     background: transparent;
     color: var(--gm-muted) !important;
@@ -242,6 +246,7 @@
 .privacy-on .cat-head:hover .cat-avg,
 .privacy-on .final-grade-block:hover .final-grade,
 .privacy-on .target-row:hover .target-result,
+.privacy-on .subject-header:hover .collapsed-grade,
 .privacy-on .summary-card:hover .value {
     color: var(--text) !important;
     background-color: transparent;
@@ -662,36 +667,6 @@
 
 .sem-tab:active {
     transform: none;
-}
-
-/* Semester selector dropdown (used in place of tabs for elective subjects). */
-.semester-select {
-    margin: 0 0 14px;
-    padding: 5px 28px 5px 12px;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text);
-    background: var(--gm-surface-hi);
-    border: 1px solid var(--gm-border);
-    border-radius: 4px;
-    cursor: pointer;
-    font-family: inherit;
-    appearance: none;
-    -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 8px center;
-    background-size: 12px;
-    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
-}
-
-.semester-select:hover {
-    border-color: var(--gm-border-hi);
-}
-
-.semester-select:focus {
-    outline: none;
-    border-color: var(--gm-border-hi);
 }
 
 .del-subject {

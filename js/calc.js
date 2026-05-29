@@ -111,7 +111,7 @@ const SUBJECT_ALIASES = {
 	'ap statistics': ['ap stats'],
 	'ap computer science a': ['ap csa', 'csa'],
 	'ap computer science principles': ['ap csp', 'csp'],
-	'ap world history: modern': ['ap world', 'whap'],
+	'ap world history: modern': ['ap world', 'whapm'],
 	'ap us history': ['apush', 'ap ush'],
 	'ap chinese language and culture': ['ap chinese'],
 	'ap music theory': ['ap music'],
